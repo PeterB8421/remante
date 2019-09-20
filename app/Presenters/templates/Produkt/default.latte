@@ -1,0 +1,58 @@
+{block content}
+    <main class="container">
+        <h2>Výpis produktů</h2>
+        <h3>Filtrovat dle výrobců</h3>
+        <div class="row">
+        <a href="#" class="btn btn-success">Všichni</a>
+        {foreach $vyrobci as $vyrobce}
+        <a n:href="vyrobce $vyrobce->id" class="btn btn-primary">{$vyrobce->vyrobce}</a>
+        {/foreach}
+        </div>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th><a n:href="default, order => 'id'">ID</a></th><th><a n:href="default, order => 'typy_produktu_id'">Typ</a></th>
+                    <th><a n:href="default, order => 'vyrobci_id'">Výrobce</a></th><th><a n:href="default, order => 'cena'">Cena</a></th>
+                    <th><a n:href="default, order => 'kod'">Kód</a></th><th>Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $produkty as $produkt}
+                    <tr>
+                        <td>{$produkt->id}</td><td>{$produkt->ref('typy_produktu', 'typy_produktu_id')->typ}</td>
+                        <td>{$produkt->ref('vyrobci', 'vyrobci_id')->vyrobce}</td><td>{$produkt->cena}</td>
+                        <td>{$produkt->kod}</td>
+                        <td><a n:href="vypis $produkt->id" class="btn btn-primary">Zobrazit</a><a n:href="upravit $produkt->id"
+                         class="btn btn-primary">Upravit</a>
+                        <a n:href="smazat! $produkt->id" class="btn btn-danger ajax">Smazat</a></td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+        <div class="row">
+            <a n:href="default, offset => $prevOffset" class="btn btn-primary" {if $prevOffset < 0} style="display: none;" {/if}>Předchozí stránka</a>
+            <a n:href="default, offset => $nextOffset" class="btn btn-primary" {if $nextOffset > $produktCount} style="display: none;" {/if}>Další stránka</a>
+        </div>
+        <h3>Správa</h3>
+        <div class="row">
+            <a n:href="Typy:default" class="btn btn-primary">Typy produktů</a>
+            <a n:href="Vyrobci:default" class="btn btn-primary">Výrobci</a>
+        </div>
+        <a n:href="vytvorit" class="btn btn-success" id="create">Vytvořit produkt</a><br>
+        <a n:href="export, offset => $offset, limit => $limit, order => $order" class="btn btn-primary">Export do CSV</a>
+    </main>
+{/block}
+
+{block scripts}
+{include parent}
+{/block}
+
+
+{block head}
+<style>
+    #create{
+        margin-top: 20px;
+    }
+</style>
+{/block}

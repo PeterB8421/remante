@@ -1,0 +1,20 @@
+{block content}
+    <main class="container">
+        <h2>Výpis produktů</h2>
+        <p>Typ: <b>{$produkt->ref("typy_produktu", "typy_produktu_id")->typ}</b></p>
+        <p>Výrobce: <b>{$produkt->ref("vyrobci", "vyrobci_id")->vyrobce}</b></p>
+        <p>Cena: <b>{$produkt->cena} Kč</b></p>
+        <p>Popis: {$produkt->popis}</p>
+        <p>Kód: <b>{$produkt->kod}</b></p>
+        <a n:href="default" class="btn btn-primary">Zpět na seznam</a>
+    </main>
+{/block}
+
+{block scripts}
+{include parent}
+{/block}
+
+
+{block head}
+
+{/block}

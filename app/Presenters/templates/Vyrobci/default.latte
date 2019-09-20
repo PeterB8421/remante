@@ -1,0 +1,38 @@
+{block content}
+    <main class="container">
+        <h2>Výpis výrobců</h2>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th><th>Jméno výrobce</th>
+                    <th>Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $vyrobci as $vyrobce}
+                    <tr>
+                        <td>{$vyrobce->id}</td>
+                        <td>{$vyrobce->vyrobce}</td>
+                        <td><a n:href="upravit $vyrobce->id" class="btn btn-primary">Upravit</a>
+                        <a n:href="smazat! $vyrobce->id" class="btn btn-danger ajax">Smazat</a></td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+        <a n:href="Produkt:default" class="btn btn-primary">Zpět na produkty</a>
+        <a n:href="vytvorit" class="btn btn-success" id="create">Přidat výrobce</a>
+    </main>
+{/block}
+
+{block scripts}
+{include parent}
+{/block}
+
+
+{block head}
+<style>
+    #create{
+        margin-top: 20px;
+    }
+</style>
+{/block}

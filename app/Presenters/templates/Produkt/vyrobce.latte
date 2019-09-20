@@ -1,0 +1,70 @@
+{block content}
+    <main class="container">
+        <h2>Výpis produktů</h2>
+        <h3>Filtrovat dle výrobců</h3>
+        <div class="row">
+        <a n:href="default" class="btn btn-primary">Všichni</a>
+        {foreach $vyrobci as $vyrobce}
+        {if $vyrobce->id != $selectedID}<a n:href="vyrobce $vyrobce->id" class="btn btn-primary">{$vyrobce->vyrobce}</a>
+        {else}
+        <a href="#" class="btn btn-success">{$vyrobce->vyrobce}</a>
+        {/if}
+        {/foreach}
+        </div>
+        <hr>
+        <h3>Filtrovat dle typu produktu</h3>
+        <div class="row">
+        {if $selectedTyp == false}
+        <a href="#" class="btn btn-success">Všechny</a>
+        {else}
+        <a n:href="vyrobce, vyr_id => $selectedID" class="btn btn-primary">Všechny</a>
+        {/if}
+        {foreach $typy as $typ}
+            {if $selectedTyp == $typ->id}
+            <a href="#" class="btn btn-success">{$typ->typ}</a>
+            {else}
+            <a n:href="vyrobce, vyr_id => $selectedID, typ_id => $typ->id" class="btn btn-primary">{$typ->typ}</a>
+            {/if}
+        {/foreach}
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th><a n:href="vyrobce,vyr_id => $selectedID,typ_id => $selectedTyp , order => 'id'">ID</a></th><th><a n:href="vyrobce,vyr_id => $selectedID,typ_id => $selectedTyp , order => 'typy_produktu_id'">Typ</a></th>
+                    <th><a n:href="vyrobce,vyr_id => $selectedID,typ_id => $selectedTyp , order => 'vyrobci_id'">Výrobce</a></th><th><a n:href="vyrobce,vyr_id => $selectedID,typ_id => $selectedTyp , order => 'cena'">Cena</a></th>
+                    <th><a n:href="vyrobce,vyr_id => $selectedID,typ_id => $selectedTyp , order => 'kod'">Kód</a></th><th>Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $produkty as $produkt}
+                    <tr>
+                        <td>{$produkt->id}</td><td>{$produkt->ref('typy_produktu', 'typy_produktu_id')->typ}</td>
+                        <td>{$produkt->ref('vyrobci', 'vyrobci_id')->vyrobce}</td><td>{$produkt->cena}</td>
+                        <td>{$produkt->kod}</td>
+                        <td><a n:href="vypis $produkt->id" class="btn btn-primary">Zobrazit</a><a n:href="upravit $produkt->id"
+                         class="btn btn-primary">Upravit</a>
+                        <a n:href="smazat! $produkt->id" class="btn btn-danger ajax">Smazat</a></td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+        <div class="row">
+            <a n:href="vyrobce, offset => $prevOffset" class="btn btn-primary" {if $prevOffset < 0} style="display: none;" {/if}>Předchozí stránka</a>
+            <a n:href="vyrobce, offset => $nextOffset" class="btn btn-primary" {if $nextOffset > $produktCount} style="display: none;" {/if}>Další stránka</a>
+        </div>
+        <a n:href="vytvorit" class="btn btn-success" id="create">Vytvořit produkt</a>
+    </main>
+{/block}
+
+{block scripts}
+{include parent}
+{/block}
+
+
+{block head}
+<style>
+    #create{
+        margin-top: 20px;
+    }
+</style>
+{/block}
