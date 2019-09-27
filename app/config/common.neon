@@ -24,6 +24,7 @@ database:
 
 
 services:
+	- App\Model\SearchManager
 	- App\Model\VyrobciManager
 	- App\Model\TypyProduktuManager
 	- App\Model\ProduktManager

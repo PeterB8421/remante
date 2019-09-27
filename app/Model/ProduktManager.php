@@ -30,6 +30,16 @@ final class ProduktManager
 		return $this->database->table(self::TABLE_NAME)->limit($limit, $offset)->order($order)->fetchAll();
 	}
 
+	public function getFiltered($offset, $order, $limit, $vyrobci, $typy){
+		if($vyrobci == null){
+			$vyrobci = "%";
+		}
+		if($typy == null){
+			$typy = "%";
+		}
+		return $this->database->table(self::TABLE_NAME)->limit($limit, $offset)->where("vyrobci_id", $vyrobci)->where("typy_produktu_id", $typy)->order($order)->fetchAll();
+	}
+
 	public function getTypFilteredList($offset, $order, $limit, $vyrobce, $typ){
 		return $this->database->table(self::TABLE_NAME)->where('vyrobci_id = ? AND typy_produktu_id = ?', $vyrobce, $typ)->limit($limit, $offset)->order($order)->fetchAll();
 	}

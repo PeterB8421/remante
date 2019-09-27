@@ -1,0 +1,39 @@
+{block content}
+    <main class="container">
+        <h2>Výsledky hledání</h2>
+        <hr>
+        <a n:href="Produkt:default" class="btn btn-primary">Zpět na výpis</a>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th><th>Typ</th>
+                    <th>Výrobce</th><th>Cena</th>
+                    <th>Kód</th><th>Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $results as $result}
+                    <tr>
+                        <td>{$result->id}</td><td>{$result->ref('typy_produktu', 'typy_produktu_id')->typ}</td>
+                        <td>{$result->ref('vyrobci', 'vyrobci_id')->vyrobce}</td><td>{$result->cena}</td>
+                        <td>{$result->kod}</td>
+                        <td><a n:href="Produkt:vypis $result->id" class="btn btn-primary">Zobrazit</a></td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+    </main>
+{/block}
+
+{block scripts}
+{include parent}
+{/block}
+
+
+{block head}
+<style>
+    #create{
+        margin-top: 20px;
+    }
+</style>
+{/block}

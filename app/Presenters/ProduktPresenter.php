@@ -8,7 +8,7 @@ use App\Model\ProduktManager;
 use App\Model\TypyProduktuManager;
 use App\Model\VyrobciManager;
 use Nette\Application\UI\Form;
-use Nette\Application\Responses\CsvResponse;
+use Nette\Application\Responses\FileResponse;
 use Tracy\Debugger;
 
 
@@ -24,7 +24,7 @@ final class ProduktPresenter extends BasePresenter
 		$this->vyrobciManager = $vyrManager;
 	}
 
-	public function actionExport($offset, $limit, $order, $vyr_id, $typ_id, $filename = "produkty.csv", $delimiter = ";"){
+	public function actionExport ($offset, $limit, $order, $vyr_id, $typ_id, $filename = "produkty.csv", $delimiter = ";"){
 		$limit = \intval($limit);
 		$offset = \intval($offset);
 		if($vyr_id){
@@ -38,14 +38,13 @@ final class ProduktPresenter extends BasePresenter
 		else{
 			$vals = $this->produktManager->getList($offset, $order, $limit);
 		}
-		$f = fopen('php://memory', 'w'); 
+		$result = "id, typ, vyrobce, cena, kod \r \n";
 		foreach ($vals as $line) { 
-			fputcsv($f, $line->toArray(), $delimiter); 
+			$result = $result . $line->id .",". $line->ref('typy_produktu' ,'typy_produktu_id')->typ .",". $line->ref('vyrobci', 'vyrobci_id')->vyrobce .",". $line->cena .",". $line->kod ."\r \n";
 		}
-		fseek($f, 0);
-		header('Content-Type: text/csv; charset=utf-8');
-		header('Content-Disposition: attachment; filename="'.$filename.'";');
-		fpassthru($f);
+		$resultFile = fopen("produkty.csv", "w");
+		fputs($resultFile, $result);
+		$this->sendResponse(new FileResponse("produkty.csv"));
 	}
 
 	public function renderDefault($order = 'id', $offset = 0, $limit = 10): void
@@ -95,6 +94,14 @@ final class ProduktPresenter extends BasePresenter
 		$this->produktManager->delete($id);
 	}
 
+	public function handleFilter($vyrobci, $typy, $offset = 0, $order = "id", $limit = 10){
+		Debugger::barDump($vyrobci);
+		Debugger::barDump($typy);
+		$results = $this->produktManager->getFiltered($offset, $order, $limit, $vyrobci, $typy);
+		$this->payload->produkty = $results;
+		$this->redrawControl("produkty");
+	}
+
 	public function createComponentProduktForm(){
 		$form  = new Form();
 		$typy = $this->typyProduktuManager->getPairs();
@@ -120,5 +127,28 @@ final class ProduktPresenter extends BasePresenter
             $this->flashMessage("Produkt byl úspěšně vložen");                        
         }
         $this->redirect("default");
+	}
+
+	public function createComponentSearchForm(){
+		$form = new Form();
+		$form->addText("search", "Vyhledávání kódů")->setRequired();
+		$form->addSubmit("submit", "Hledat");
+		$form->onSuccess[] = array($this, 'searchFormSucceeded');
+
+		return $form;
+	}
+
+	public function searchFormSucceeded(Form $form, $values){
+		$this->redirect('Search:default', $form->getValues()->search);
+	}
+
+	public function createComponentFiltrForm(){
+		$form = new Form();
+		$vyrobci = $this->vyrobciManager->getPairs();
+		$form->addMultiSelect("vyrobci", "Výrobci", $vyrobci);
+		$typy = $this->typyProduktuManager->getPairs();
+		$form->addMultiSelect("typy", "Typy produktů", $typy);
+		$form->addSubmit("filter", "Filtrovat")->setAttribute("class", "ajax")->setAttribute("n:href", "filter!");
+		return $form;
 	}
 }

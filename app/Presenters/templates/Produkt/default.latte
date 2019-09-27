@@ -1,14 +1,20 @@
 {block content}
     <main class="container">
         <h2>Výpis produktů</h2>
-        <h3>Filtrovat dle výrobců</h3>
+        <hr>
+        <h3>Filtry</h3>
+        {import '../components/bootstrap-form.latte'}
+        {include bootstrap-form searchForm}
         <div class="row">
-        <a href="#" class="btn btn-success">Všichni</a>
+        <!--<a href="#" class="btn btn-success">Všichni</a>
         {foreach $vyrobci as $vyrobce}
         <a n:href="vyrobce $vyrobce->id" class="btn btn-primary">{$vyrobce->vyrobce}</a>
-        {/foreach}
+        {/foreach}-->
+        {import '../components/bootstrap-form.latte'}
+        {include bootstrap-form filtrForm}
         </div>
         <hr>
+        {snippet produkty}
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -30,6 +36,7 @@
                 {/foreach}
             </tbody>
         </table>
+        {/snippet}
         <div class="row">
             <a n:href="default, offset => $prevOffset" class="btn btn-primary" {if $prevOffset < 0} style="display: none;" {/if}>Předchozí stránka</a>
             <a n:href="default, offset => $nextOffset" class="btn btn-primary" {if $nextOffset > $produktCount} style="display: none;" {/if}>Další stránka</a>
